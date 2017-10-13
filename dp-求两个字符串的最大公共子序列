@@ -1,8 +1,13 @@
 #_*_coding: utf_8 _*_ 
-from __future__ import print_function
+from __future__ import print_function #将python3中的print函数调用，可以实现end=‘’不换行输出的功能
 import math
 '''
 求出两个字符串最大公共子序列以及输出他的长度，基础动态规划题目
+输入：
+2017 11 02
+02 11 2017
+输出：
+最大公共子序列
 '''
 def lcs(a,b):
     lena=len(a)
