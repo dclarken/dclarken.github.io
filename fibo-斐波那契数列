@@ -1,4 +1,7 @@
-
+#coding:utf-8
+'''
+fibo也可以用于处理上楼梯问题
+'''
 def recur_Fibo(n):
     F=[]
     F.append(1)
