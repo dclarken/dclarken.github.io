@@ -1,0 +1,29 @@
+#coding:utf8
+'''
+小易去附近的商店买苹果，奸诈的商贩使用了捆绑交易，
+只提供6个每袋和8个每袋的包装(包装不可拆分)。 
+可是小易现在只想购买恰好n个苹果，
+小易想购买尽量少的袋数方便携带。
+如果不能购买恰好n个苹果，小易将不会购买。
+
+'''
+def stepstone(amount):
+    amount=int(amount)
+    #amount=20
+    INT_MAX=10**10
+    step=[INT_MAX for i in range(amount+1)]
+    step[6]=1
+    step[8]=1
+    for i in range(7,amount+1):
+        if step[i]==INT_MAX:
+            continue
+        else:
+            if (i+6)<=amount:
+                step[i+6]=min(step[i+6],step[i]+1)
+            if (i+8)<=amount:
+                step[i+8]=min(step[i+8],step[i]+1)
+    return (step[amount])
+def main():
+    amount=20
+    print(stepstone(amount))
+main()
