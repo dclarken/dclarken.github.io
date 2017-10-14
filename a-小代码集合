@@ -42,5 +42,13 @@ def is_hui(n):
   '''
   字符串循环左移
   '''
-  def LeftRotateString(s, n):
-      return (s[n:]+s[:n])
+def LeftRotateString(s, n):
+    return (s[n:]+s[:n])
+  '''
+  以空格为拆分倒输出一个字符串
+  '''
+def ReserveSentence(x):
+    x=x.split(' ')
+    x=x[::-1]
+    x=' '.join(x)
+    return (x)
