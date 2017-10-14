@@ -1,0 +1,41 @@
+'''
+转换进制十进制转化为任意进制n
+'''
+def change(n,num):
+    list1 = []
+    if num==1:
+        return 1
+    while num > 1 :
+        list1.append(str(num % n))
+        num /= n
+        list1.append(str(num))
+        list1.reverse()
+    list1=int(''.join(list1))
+    return list1
+'''
+计算一个n进制数字各个位数的和
+'''
+def sum_wei(n,num):
+    count=0
+    while num >= 1 :
+        count +=num%n
+        num /= n
+    return count
+'''
+判断是否为素数
+'''
+def is_prime(n):
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n%i == 0:
+            return False
+    return True
+'''
+判断是否为回文数
+'''
+def is_hui(n):  
+    n=str(n)  
+    m=n[::-1]  
+    if n==m:
+        return True 
+    else:
+        return False 
