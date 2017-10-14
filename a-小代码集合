@@ -39,3 +39,8 @@ def is_hui(n):
         return True 
     else:
         return False 
+  '''
+  字符串循环左移
+  '''
+  def LeftRotateString(s, n):
+      return (s[n:]+s[:n])
