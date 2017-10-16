@@ -1,0 +1,23 @@
+# -*- coding:utf-8 -*-
+'''
+把只包含因子2、3和5的数称作丑数（Ugly Number）。
+例如6、8都是丑数，但14不是，因为它包含因子7。 习惯上我们把1当做是第一个丑数。求按从小到大的顺序的第N个丑数。
+'''
+
+def GetUglyNumber_Solution(self, index):
+    if index<=0:
+        return 0
+    uglylist=[1]
+    indextwo=0
+    indexthree=0
+    indexfive=0
+    for i in range(index-1):
+        newugly=min(uglylist[indextwo]*2,uglylist[indexthree]*3,uglylist[indexfive]*5)
+        uglylist.append(newugly)
+        if (newugly%2==0):
+            indextwo+=1
+        if (newugly%3==0):
+            indexthree+=1
+        if (newugly%5==0):
+            indexfive+=1
+    return uglylist[-1]
