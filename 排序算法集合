@@ -1,0 +1,52 @@
+'''
+冒泡算法：
+比较相邻的元素。如果第一个比第二个大，就交换他们两个。
+对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。
+针对所有的元素重复以上的步骤，除了最后一个。
+持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。
+选择算法：
+每次讲min置成无序组起始位置元素下标
+例遍无序组找到最小的
+如果最小元素不是无序组起始位置元素，则与起始元素交换位置
+插入算法：
+插入排序原理很简单，讲一组数据分成两组，我分别将其称为有序组与待插入组。
+每次从待插入组中取出一个元素，与有序组的元素进行比较，并找到合适的位置，将该元素插到有序组当中。
+就这样，每次插入一个元素，有序组增加，待插入组减少。直到待插入组元素个数为0。
+当然，插入过程中涉及到了元素的移动。
+'''
+#coding:utf-8
+def bubble(num,n):
+    for i in range(n):
+        for j in range(n-i-1):
+            if num[j]>num[j+1]:
+                tmp=num[j]
+                num[j]=num[j+1]
+                num[j+1]=tmp
+    return (num)
+def selectsort(num,n):
+    for i in range(n):
+        min=i
+        for j in range(i,n):
+            if num[j]<num[min]:
+                min=j
+        if min!=i:
+            tmp=num[i]
+            num[i]=num[min]
+            num[min]=tmp
+    return (num)
+def insertsort(num,n):
+    for i in range(1,n):
+        tmp=num[i]
+        j=i-1
+        while j>0 and tmp<num[j]:
+            num[j+1]=num[j]
+            j -=1
+        num[j+1]=tmp
+    return (num)           
+def main():
+    num=[9,8,7,6,5,4,3,2,1,0]
+    print(bubble(num,10))
+    print(selectsort(num,10))
+    print(insertsort(num,10))
+main()
+    
