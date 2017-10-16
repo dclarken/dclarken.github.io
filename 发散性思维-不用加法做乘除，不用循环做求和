@@ -22,3 +22,16 @@ def Add(num1, num2):
 def main():
     print(Add(5,7))
 main()
+'''
+求1+2+3+...+n，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+思路：利用递归思想
+'''
+def __init__(self):
+    self.sum=0
+def Sum_Solution(self, n):
+    def qiusum(n):
+        self.sum +=n
+        n -=1
+        return (n>0)and self.Sum_Solution(n) 
+    qiusum(n)
+    return self.sum
