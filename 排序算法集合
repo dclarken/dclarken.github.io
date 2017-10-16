@@ -13,6 +13,9 @@
 每次从待插入组中取出一个元素，与有序组的元素进行比较，并找到合适的位置，将该元素插到有序组当中。
 就这样，每次插入一个元素，有序组增加，待插入组减少。直到待插入组元素个数为0。
 当然，插入过程中涉及到了元素的移动。
+快速排序：
+基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，
+然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进行，以此达到整个数据变成有序序列。
 '''
 #coding:utf-8
 def bubble(num,n):
@@ -42,7 +45,23 @@ def insertsort(num,n):
             num[j+1]=num[j]
             j -=1
         num[j+1]=tmp
-    return (num)           
+    return (num)   
+def quicksort(L, low, high):
+    i = low 
+    j = high
+    if i >= j:
+        return L
+    key = L[i]
+    while i < j:
+        while i < j and L[j] >= key:
+            j = j-1                                                             
+        L[i] = L[j]
+        while i < j and L[i] <= key:    
+            i = i+1 
+        L[j] = L[i]
+    L[i] = key 
+    quicksort(L, low, i-1)
+    quicksort(L, j+1, high)
 def main():
     num=[9,8,7,6,5,4,3,2,1,0]
     print(bubble(num,10))
