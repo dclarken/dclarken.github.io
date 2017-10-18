@@ -1,0 +1,13 @@
+/*
+将数组的元素重新排序的所有序列，利用next_permuteUnique全排序函数实现
+*/
+vector<vector<int> > permuteUnique(vector<int> &num) {
+    vector<vector<int>> res;
+    vector<int> vec=num;
+    do
+    {
+        res.push_back(num);
+        next_permutation(num.begin(),num.end());
+    }while(num!=vec);
+    return res;
+}
