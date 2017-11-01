@@ -1,6 +1,9 @@
 #coding=utf-8  
-  
-'''''装饰器版的python自动缓存系统'''  
+```
+源码地址：
+https://github.com/ma6174/pycache
+``` 
+'''装饰器版的python自动缓存系统'''  
   
 import time  
 import hashlib  
