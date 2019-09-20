@@ -1,4 +1,4 @@
-##自动填写密码进行同步
+##鑷姩濉啓瀵嗙爜杩涜鍚屾
 acount=user@ip
 passwd=Passwd
 destPath=
@@ -14,6 +14,6 @@ rsync_expect(){
 	expect "*@*"
 	EOF
 }
-##同步远程服务器至临时目标目录
-可执行命令rsync_expect
+##鍚屾杩滅▼鏈嶅姟鍣ㄨ嚦涓存椂鐩爣鐩綍
+鍙墽琛屽懡浠sync_expect
 rsync_expect ${account}:${destPath} ${destPathTemp%/*}
