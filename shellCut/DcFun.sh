@@ -4,17 +4,19 @@ timeNow=`date +%s%N`
 binPath=`pwd`
 outFile="${binPath}/.out.log"
 outDir="${binPath}/logs"
-
+#创建文件
 function touchFile()
 {
 	[[ -f $1 ]] && (cat /dev/null > $1; echo "Script initialization: $1 exit clear it") || (touch $1; echo "Script initialization: $1 not exit touch it")
 }
 #touchFile ${outFile}
+#创建目录
 function touchDir()
 {
 	[[  -d "$1" ]] && (echo "Script initialization: $1 exit" ) || (mkdir -p ${1%*/};echo "Script initialization: $1 not exit mkdir it")
 }
 #touchDir ${outDir}
+#日志输出
 function logOut()
 {
         if [[ -z $2 ]];then echo -e "$@" | tee -a "${outFile}"
@@ -25,6 +27,7 @@ function logOut()
 #logOut "123"
 #logOut "123" ${outFile}
 #logOut "123" ${outFile} withTime
+#变量数量核查
 function varChk()
 {
         num=`echo $1| sed  s/number=//g`
@@ -38,7 +41,7 @@ function varChk()
         fi
 }
 # varChk number=3 var1 var2 var3
-
+#telnet验证
 function telnetChk()
 {
         ip=$1
