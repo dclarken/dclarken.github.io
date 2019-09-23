@@ -93,3 +93,20 @@ def NumberOf1Between1AndN_Solution(n):
             res+=base
         base*=10
     return res
+
+'''
+python中argparse模块
+使用argparse模块获取脚本参数
+'''
+#首先导入模块
+import argparse    
+#创建一个解析对象
+parser = argparse.ArgumentParser(description='-p "{dict}"')
+#向该对象中添加你要关注的命令行参数和选项
+parser.add_argument('-p','--param',help='脚本参数')
+#进行解析  
+args = parser.parse_args()
+#从param串中获取参数
+param = args.param
+#eval函数实现list、dict、tuple与str之间的转化;str函数把list，dict，tuple转为为字符串
+param_dict = eval(param)
