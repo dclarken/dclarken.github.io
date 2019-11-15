@@ -2,8 +2,10 @@
 dateNow=`date +"%Y-%m-%d"`
 timeNow=`date +%s%N`
 binPath=`pwd`
-outFile="${binPath}/.out.log"
+host=`hostname -I|sed 's/ //g'`
+outFile="/tmp/${timeNow}.out.log"
 outDir="${binPath}/logs"
+#outFile="${binPath}/${timeNow}.out.log"
 #创建文件
 function touchFile()
 {
@@ -16,12 +18,23 @@ function touchDir()
 	[[  -d "$1" ]] && (echo "Script initialization: $1 exit" ) || (mkdir -p ${1%*/};echo "Script initialization: $1 not exit mkdir it")
 }
 #touchDir ${outDir}
+#默认赋值
+function assignment()
+{
+	if [[ ! -z $1 ]];then
+		a=$1
+	else
+		a=unassignment
+	fi
+echo $a 
+}
+#a=`assignment $1`
 #日志输出
 function logOut()
 {
-        if [[ -z $2 ]];then echo -e "$@" | tee -a "${outFile}"
+        if [[ -z $2 ]];then echo -e "$(date '+%Y-%m-%d %H:%M:%S.888')|${host}|$@" | tee -a "${outFile}"
         elif [[ -z $3 ]];then echo -e "$1" | tee -a "$2"
-        elif [[ $3 == 'withTime' ]];then echo -e "$(date '+%Y-%m-%d %H:%M:%S.888')|$1" | tee -a "$2"
+        elif [[ $3 == 'withTime' ]];then echo -e "$(date '+%Y-%m-%d %H:%M:%S.888')|${host}|$1" | tee -a "$2"
         fi
 }
 #logOut "123"
@@ -34,9 +47,9 @@ function varChk()
         echo "Number of variables: $1"
         let num++
         if [[ $num -eq $# ]];then 
-                echo "varChk success, the number of variables is sufficient";
+                echo "varChk success, the number of variables is sufficient"
         else
-                echo "varChk failed, The number of variables is not enough";
+                echo "varChk failed, The number of variables is not enough"
                 exit 1
         fi
 }
@@ -46,7 +59,7 @@ function telnetChk()
 {
         ip=$1
         port=$2
-        result=`sleep 1|telnet $ip $port`
+        result=`sleep 1|timeout 5 telnet $ip $port`
         flag=`echo -e "${result}" | grep 'Escape character is'|sed 's/is.*$/is/g'`
         if [ "$flag" != "Escape character is" ]; then
                 echo "telnet $ip $port failed" 
