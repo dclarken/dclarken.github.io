@@ -209,6 +209,64 @@ fi
 #返回0即退出
 [[ $? -eg 0 ]]&&exit1
 ============================================================================================================
+dirA=/app/image/upload/fermsupload/st1/
+dirB=/app/esi/cmp-ferms-resource/image/
+
+磁盘目录共享设置 把A上的目录dirA挂载到B上的dirB
+A:
+/etc/init.d/rpcbind start
+/etc/init.d/nfs start 
+
+vim /etc/exports
+#dirA *(rw,sync,no_root_squash)
+dirA *(rw,no_root_squash)
+service nfs restart
+
+vim /etc/rc.d/rc.local
+service nfs restart
+exportfs –rv
+service iptables stop
+
+bash /etc/rc.d/rc.local
+
+B:
+/etc/init.d/rpcbind start
+/etc/init.d/nfs start 
+
+vim /etc/rc.d/rc.local
+mount -t nfs -o rw A:dirA  dirB
+bash /etc/rc.d/rc.local
+
+vim /etc/idmapd.conf ##把nobody调整为esi
+
+
+取消挂载：
+B:
+/etc/init.d/rpcbind stop 
+/etc/init.d/nfs stop 
+umount dirB  
+
+
+技术二：
+dirA=/app/image/upload/fermsupload/st1/
+dirB=/app/esi/cmp-ferms-resource/image/
+
+磁盘目录共享设置 把A上的目录dirA挂载到B上的dirB
+A：
+。。。
+
+B：
+yum install nfs-utils
+vim /etc/fstab
+    A:dirA dirB nfs nfsvers=3,hard,timeo=600,retrans=2,_netdev 0 0 
+mount -t nfs -o vers=3,nolock,proto=tcp A:dirA dirB 
+gpasswd -a ${userName} nfsnobody 
+
+
+取消挂载：
+umount dirB 
+yum erase nfs-utils
+============================================================================================================
 function sql()
 {
 host=
@@ -222,103 +280,4 @@ exit
 EOF`
 echo -e "${query}"
 }
-============================================================================================================
-#创建文件
-function touchFile()
-{
-	[[ -f $1 ]] && (cat /dev/null > $1; echo "Script initialization: $1 exit clear it") || (touch $1; echo "Script initialization: $1 not exit touch it")
-}
-============================================================================================================
-#文件没有内容不再继续
-function tureFile()
-{
-	if [ ! -s $1 ];then echo "$1 is empty"; exit 1
-	else echo "$1 is true continue"
-	fi
-}
-#创建目录
-function touchDir()
-{
-	[[  -d "$1" ]] && (rm -rf ${1%*/}/;echo "Script initialization: $1 exit clear it" ) || (mkdir -p ${1%*/};echo "Script initialization: $1 not exit mkdir it")
-}
-
-function touchDir()
-{
-	[[  -d "$1" ]] && (echo "Script initialization: $1 exit" ) || (mkdir -p ${1%*/};echo "Script initialization: $1 not exit mkdir it")
-}
-============================================================================================================
-function varChk()
-{
-	if [[ -z $1 ]]; then echo "var1 null";exit 1
-	elif [[ -z $2 ]]; then echo "var2 null";exit 1
-	elif [[ -z $3 ]]; then echo "var3 null";exit 1
-	else echo "varChk ok"
-	fi
-}
-function varChk()
-{
-        num=`echo $1| sed  s/number=//g`
-        echo "Number of variables: $1"
-        let num++
-        if [[ $num -eq $# ]];then 
-                echo "varChk success, the number of variables is sufficient";
-        else
-                echo "varChk failed, The number of variables is not enough";
-                exit 1
-        fi
-}
-============================================================================================================
-#定义输出函数 
-#${OutFile}定义为输出文件 $@ 将输入的参数全部传入 <b style="color:red">表示加粗并且显示红色
-#格式：tee -a file 输出到标准输出的同时，追加到文件file中。如果文件不存在，则创建；如果已经存在，就在末尾追加内容，而不是覆盖
-date +"%Y%m%d%H%M%S"
-outDir="${binPath}/log"
-#!/bin/bash
-cd `dirname $0`
-binPath=`pwd`
-outFile="${binPath}/.out.log"
-function logOut()
-{
-	echo -e "$@" | tee -a "${outFile}"
-}
-function logOutWithTime()
-{
-	echo -e "$(date '+%Y-%m-%d %H:%M:%S.888')|$@" | tee -a "${outFile}"
-}
-function logOutToFile()
-{
-	echo -e "$@" | tee -a "$1"
-}
-function logOut()
-{
-        if [[ -z $2 ]];then echo -e "$@" | tee -a "${outFile}"
-        elif [[ -z $3 ]];then echo -e "$@" | tee -a "$2"
-        elif [[ $3 == 'withTime' ]];then echo -e "$(date '+%Y-%m-%d %H:%M:%S.888')|$@" | tee -a "$2"
-        fi
-}
-logOut "<br>""<b style="color:red">输出结果如下</b>""<br>"
-logOut "<br>""`cat $out`""<br>"
-logOut "\n"
-#定义输出函数带颜色参数
-function logOutC()
-{
-	case $2 in
-        green)
-			echo -e "\033[32;40m$1\033[0m" | tee -a "${outFile}"
-            ;;	
-        red)
-            echo -e "\033[31;40m$1\033[0m" | tee -a "${outFile}"
-            ;;
-        *)
-            echo -e "$@" | tee -a "${outFile}"
-    esac			
-}
-function logOutC()
-{
-	if [[ $2 == "green" ]]; then echo -e "\033[32;40m$1\033[0m" | tee -a "${outFile}"
-	elif [[ $2 == "red" ]]; then echo -e "\033[31;40m$1\033[0m" | tee -a "${outFile}"
-	else echo -e "$@" | tee -a "${outFile}"
-	fi 
-}
-使用方法：echo_color "test" green
 ============================================================================================================
