@@ -92,3 +92,26 @@ function pidChk()
 		retturn_str="$pid"
 	fi
 }
+
+#定义输出函数带颜色参数
+function logOutC()
+{
+	case $2 in
+        green)
+	    echo -e "\033[32;40m$1\033[0m" | tee -a "${outFile}"
+            ;;	
+        red)
+            echo -e "\033[31;40m$1\033[0m" | tee -a "${outFile}"
+            ;;
+        *)
+            echo -e "$@" | tee -a "${outFile}"
+    esac			
+}
+function logOutC()
+{
+	if [[ $2 == "green" ]]; then echo -e "\033[32;40m$1\033[0m" | tee -a "${outFile}"
+	elif [[ $2 == "red" ]]; then echo -e "\033[31;40m$1\033[0m" | tee -a "${outFile}"
+	else echo -e "$@" | tee -a "${outFile}"
+	fi 
+}
+使用方法：echo_color "test" green
