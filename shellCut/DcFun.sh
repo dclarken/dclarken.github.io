@@ -69,3 +69,16 @@ function telnetChk()
                 return 0
         fi
 }
+#并发锁
+lockFile="${binPath}/lockFile"
+shellLock()
+{
+	touch ${lockFile}
+}
+shellUnlock()
+{
+	rm -f ${lockFile}
+}
+if [ -f ${lockFile} ];then
+	echo "$0 is runing, please wait" && exit
+fi
