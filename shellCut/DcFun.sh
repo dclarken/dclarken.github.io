@@ -82,3 +82,13 @@ shellUnlock()
 if [ -f ${lockFile} ];then
 	echo "$0 is runing, please wait" && exit
 fi
+#kill前后都保留现场, 两次ps -ef|grep -w 关键字|grep -v grep >>/tmp/kill_进程名_.backup；
+function pidChk()
+{
+	if [ $pid -gt 1-a $pid -lt 9999999999999 ];
+	then 
+		kill
+	else
+		retturn_str="$pid"
+	fi
+}
