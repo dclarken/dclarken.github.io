@@ -97,6 +97,8 @@ find . -name "RE" -newerct '2018-12-17 02:59:00' ! -newerct '2018-12-17 03:59:00
 find /path -name "filename" | xargs | sed -i 's///g'
 #查找一个月前的日志并删除
 find /path -mtime +30 -type f -name \*.zip -exec rm -f {} \;
+#查找365天内的文件
+find . -mtime -365 -type f -name "*.zip" 
 #============================================================================================================
 #path路径变量
 path="/app/home/local"
