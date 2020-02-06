@@ -1,4 +1,15 @@
 #!/bin/bash
+############
+#功能说明
+#
+#参数说明
+#参数1
+#参数2
+#参数3
+#20191121 dc v1.0
+#
+############
+set -eu
 dateNow=`date +"%Y-%m-%d"`
 timeNow=`date +%s%N`
 binPath=`pwd`
@@ -40,6 +51,14 @@ function logOut()
 #logOut "123"
 #logOut "123" ${outFile}
 #logOut "123" ${outFile} withTime
+#返回非0即退出
+function exitLog()
+{
+	if [[ $? -ne 0 ]];then 
+		echo "$@"
+		exit 1
+	fi
+}
 #变量数量核查
 function varChk()
 {
@@ -54,6 +73,16 @@ function varChk()
         fi
 }
 # varChk number=3 var1 var2 var3
+#kill前后都保留现场, 两次ps -ef|grep -w 关键字|grep -v grep >>/tmp/kill_进程名_.backup；
+function pidChk()
+{
+	if [ $pid -gt 1-a $pid -lt 9999999999999 ];
+	then 
+		kill
+	else
+		retturn_str="$pid"
+	fi
+}
 #telnet验证
 function telnetChk()
 {
@@ -63,7 +92,7 @@ function telnetChk()
         flag=`echo -e "${result}" | grep 'Escape character is'|sed 's/is.*$/is/g'`
         if [ "$flag" != "Escape character is" ]; then
                 echo "telnet $ip $port failed" 
-				return 1
+		return 1
         else
                 echo "telnet $ip $port success"
                 return 0
@@ -82,36 +111,96 @@ shellUnlock()
 if [ -f ${lockFile} ];then
 	echo "$0 is runing, please wait" && exit
 fi
-#kill前后都保留现场, 两次ps -ef|grep -w 关键字|grep -v grep >>/tmp/kill_进程名_.backup；
-function pidChk()
-{
-	if [ $pid -gt 1-a $pid -lt 9999999999999 ];
-	then 
-		kill
-	else
-		retturn_str="$pid"
-	fi
+#============================================================================================================
+#远程同登陆 有的时候直接远程同步会失败，在前面加一层远程登陆又好了
+#!/bin/bash
+##自动填写密码进行同步
+acount=user@ip
+passwd=Passwd
+destPath=
+destPathTemp=
+#acount=$1 destPath=$2 
+ssh_expect(){
+	/usr/bin/expect <<-EOF
+	set time 30
+	spawn ssh $1
+	expect {
+		"*yes/no" { send "yes\r"; exp_continue }
+		"*password:" { send "${passwd}\r" }
+	}
+	expect "*@*"
+	EOF
 }
-
-#定义输出函数带颜色参数
-function logOutC()
-{
-	case $2 in
-        green)
-	    echo -e "\033[32;40m$1\033[0m" | tee -a "${outFile}"
-            ;;	
-        red)
-            echo -e "\033[31;40m$1\033[0m" | tee -a "${outFile}"
-            ;;
-        *)
-            echo -e "$@" | tee -a "${outFile}"
-    esac			
+ssh_expect ${acount}@${ip}
+#============================================================================================================
+#远程同步
+#!/bin/bash
+##自动填写密码进行同步
+acount=user@ip
+passwd=Passwd
+destPath=
+destPathTemp=
+#acount=$1 destPath=$2 
+rsync_expect(){
+	/usr/bin/expect <<-EOF
+	set time 30
+	spawn rsync -avH $1 $2
+	expect {
+		"*yes/no" { send "yes\r"; exp_continue }
+		"*password:" { send "${passwd}\r" }
+	}
+	expect "*@*"
+	EOF
 }
-function logOutC()
-{
-	if [[ $2 == "green" ]]; then echo -e "\033[32;40m$1\033[0m" | tee -a "${outFile}"
-	elif [[ $2 == "red" ]]; then echo -e "\033[31;40m$1\033[0m" | tee -a "${outFile}"
-	else echo -e "$@" | tee -a "${outFile}"
-	fi 
+##同步远程服务器至临时目标目录,可执行命令rsync_expect
+rsync_expect ${acount}:${destPath} ${destPathTemp%/*}
+#============================================================================================================
+#远程自动创建目录
+acount=name@ip
+passwd=Passwd
+destPath=
+mkdir_expect(){
+	/usr/bin/expect <<-EOF
+	set time 30
+	
+	spawn ssh $1
+	expect {
+		"*yes/no" { send "yes\r"; exp_continue }
+		"*password:" { send "${passwd}\r" }
+	}
+	expect "*@*"
+	send "mkdir -p $2\r"
+	
+	expect "*@*"
+	send "\r"
+	expect "*@*"
+	EOF
 }
-使用方法：echo_color "test" green
+mkdir_expect ${acount} ${destPath%/*}
+#============================================================================================================
+#远程调整权限
+acount=name@ip
+passwd=123456
+destPath=
+permission=name:name:644
+Ops=rsyOps
+chown_expect(){
+	/usr/bin/expect <<-EOF
+	set time 30
+	
+	spawn ssh $1
+	expect {
+		"*yes/no" { send "yes\r"; exp_continue }
+		"*password:" { send "${passwd}\r" }
+	}
+	expect "*@*"
+	send "chown -R ${3%:*} $2\r"
+	expect "*@*"
+	send "chmod -R ${3##*:} $2\r"
+	
+	expect "*@*"
+	send "\r"
+	expect "*@*"
+	EOF
+}
+chown_expect ${acount} ${destPath} ${permission}
