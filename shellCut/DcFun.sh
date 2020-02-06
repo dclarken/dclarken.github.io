@@ -112,6 +112,26 @@ if [ -f ${lockFile} ];then
 	echo "$0 is runing, please wait" && exit
 fi
 #============================================================================================================
+#判断字符是否为空 文件是否有内容
+STRING=
+filename=
+if [ -s "$filename" ]; then 
+    echo "filename is not empty" 
+fi
+[[ ! -s "$filename" ]] && (echo "$filename is empty";exit 1)
+#
+if [ -z "$STRING" ]; then 
+    echo "STRING is empty" 
+fi
+#-n该方法只能判断是否存在，不能判断是否为空值
+if [ -n "$STRING" ]; then 
+    echo "STRING is not empty" 
+fi
+#返回非0即退出
+[[ $? -ne 0 ]]&&exit 1
+#返回0即退出
+[[ $? -eg 0 ]]&&exit 1
+#============================================================================================================
 #远程同登陆 有的时候直接远程同步会失败，在前面加一层远程登陆又好了
 #!/bin/bash
 ##自动填写密码进行同步
