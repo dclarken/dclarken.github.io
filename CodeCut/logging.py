@@ -25,7 +25,7 @@ def logger_out(logFilename):
   #5）logger.setLevel(logging.DEBUG) 设置日志级别，也可以分别对两个hander设置日志级别
   #6) 最后便可使用 logger对象 记录日志~
   
-  #获取logger对象
+  #获取logger对象，需要在main函数中定义，否则会报错找不到全局变量
   logger=logging.getLogger(__name__)
   #设置logger的日志级别
   logger.setLevel(logging.DEBUG)
