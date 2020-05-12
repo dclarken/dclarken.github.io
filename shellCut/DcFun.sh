@@ -98,6 +98,26 @@ function telnetChk()
                 return 0
         fi
 }
+function telnetChk()
+{
+		result="/tmp/${timeNow}.result.log"
+		touchFile ${result}
+        ip=$1
+        port=$2
+#        result=`sleep 1|timeout 5 telnet $ip $port`
+#        flag=`echo -e "${result}" | grep 'Escape character is'|sed 's/is.*$/is/g'`
+  	timeout 5 telnet $ip $port<<EOF 2>${result} 1>&2
+quit
+EOF
+	flag=`cat "${result}" | grep 'Escape character is'|sed 's/is.*$/is/g'`
+        if [ "$flag" != "Escape character is" ]; then
+                echo "telnet $ip $port failed" 
+				return 1
+        else
+                echo "telnet $ip $port success"
+                return 0
+        fi
+}
 #并发锁
 lockFile="${binPath}/lockFile"
 shellLock()
